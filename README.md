@@ -1,6 +1,6 @@
 # CRUD-Python
 
-Este é um script em Python que permite gerenciar um banco de dados de produtos. Este programa permite ao usuário realizar as operações básicas de CRUD (criação, leitura, atualização e exclusão) em um banco de dados MySQL
+Este é um código em Python que realiza operações de CRUD (Create, Read, Update e Delete) em um banco de dados MySQL. Ele utiliza a biblioteca PySimpleGUI para criar interfaces gráficas.
 
 # Pré-requisitos
 Antes de utilizar este script, certifique-se de ter o MySQL instalado em sua máquina e ter as credenciais de acesso ao banco de dados (host, usuário, senha e nome do banco de dados).
@@ -18,13 +18,23 @@ CREATE TABLE produtos (
 Para utilizar este script, basta ter o Python instalado em sua máquina. Também é necessário instalar o pacote mysql-connector-python, que pode ser instalado através do comando no seu terminal: "pip install mysql-connector-python"
 
 # Utilização
-Ao executar o script, será solicitado ao usuário que informe se deseja adicionar um novo produto, atualizar um produto existente ou excluir um produto do banco de dados. Dependendo da opção escolhida, o usuário será solicitado a informar as informações necessárias (nome, preço, novo nome, novo preço, etc.).
+Clone este repositório ou baixe o arquivo crud.py.
+Instale as dependências necessárias, executando o comando pip install PySimpleGUI mysql-connector-python.
+Configure as credenciais de acesso ao banco de dados. Para isso, edite as seguintes linhas no início do arquivo crud.py:
 
-No arquivo Python, insira as suas credenciais de acesso ao banco de dados MySQL nas variáveis host, user, password e database.
+conexao = mysql.connector.connect(
+    host='seu_host',
+    user='usuario_do_seu_banco',
+    password='senha_do_seu_banco',
+    database='nome_do_seu_banco',
+)
+
+Substitua os valores entre as aspas pelos dados de acesso ao seu banco de dados.
+
+Execute o arquivo crud.py e utilize as funcionalidades disponíveis:
+Adicionar Produto: permite cadastrar um novo produto no banco de dados, informando o nome e o preço.
+Atualizar Produto: permite atualizar o nome ou o preço de um produto já cadastrado no banco de dados, informando o ID do produto.
+Deletar Produto: permite excluir um produto cadastrado no banco de dados, informando o ID do produto.
+Ler Banco de Dados: exibe todos os produtos cadastrados no banco de dados.
 
 
-Após as operações serem realizadas, o script exibirá todos os produtos cadastrados no banco de dados.
-
-# Observações
-O programa foi criado para fins educacionais e pode ser adaptado para atender a necessidades específicas.
-Este programa não contempla questões de segurança como, por exemplo, validação de entrada de dados e prevenção de ataques SQL injection.
