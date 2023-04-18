@@ -1,5 +1,5 @@
 import mysql.connector
-
+import PySimpleGUI as sg
 
 # CREDENCIAIS DE ACESSO PARA INICAR A CONEXAO COM O BANCO DE DADOS
 conexao = mysql.connector.connect(
@@ -11,73 +11,164 @@ conexao = mysql.connector.connect(
 
 cursor = conexao.cursor()
 
-# INPUTS PARA USUARIO
-criar = input('Deseja acrescentar um novo produto? (s/SIM - n/NAO): ')
-atualizar = input('Deseja atualizar um produto existente? (s/SIM - n/NAO): ')
 
-if atualizar == 's':
-    up_valor = input('Deseja atualizar o valor? (s/SIM - n/NAO): ')
-    up_nome = input('Deseja atualizar o nome? (s/SIM - n/NAO): ')
+sg.theme('Reddit')
 
-apagar = input('Deseja apagar um produto do cadastro? (s/SIM - n/NAO): ')
+def janela_inicial():
+    layout = [
+        [sg.Text('CRUD Python')],
+        [sg.Button('Adicionar Produto'), sg.Button('Atualizar Produto'), sg.Button('Deletar Produto'), sg.Button('Ler Banco de Dados')]
+    ]
+    return sg.Window('CRUD', layout, finalize=True)
+
+def janela_add_prod():
+    layout = [
+        [sg.Text('Informe o produto'), sg.Input(key='addProduto')],
+        [sg.Text('Informe o preco'), sg.Input(key='addPreco')],
+        [sg.Text('', key='aviso')],
+        [sg.Button('ADICIONAR'), sg.Button('VOLTAR')]
+    ]
+    return sg.Window('CRUD Adicionar Produto', layout, finalize=True)
+
+def janela_define_atualizar():
+    layout = [
+        [sg.Text('O que deseja atualizar no produto?')],
+        [sg.Button('VALOR'), sg.Button('NOME'), sg.Button('VOLTAR')]
+    ]
+    return sg.Window('CRUD Adicionar Produto', layout, finalize=True)
+
+def janela_atualiza_valor():
+    layout = [
+        [sg.Text('Informe o ID do produto'), sg.Input(key='idVenda')],
+        [sg.Text('Informe o novo preço do produto'), sg.Input(key='novoPrecoProd')],
+        [sg.Text('',key='aviso')],
+        [sg.Button('ATUALIZAR VALOR'), sg.Button('VOLTAR')]
+    ]
+    return sg.Window('CRUD Atualiza Valor', layout, finalize=True)
+
+def janela_atualiza_nome():
+    layout = [
+        [sg.Text('Informe o ID do produto'), sg.Input(key='idProd')],
+        [sg.Text('Informe o novo nome do produto'), sg.Input(key='novoNomeProd')],
+        [sg.Text('',key='aviso')],
+        [sg.Button('ATUALIZAR NOME'), sg.Button('VOLTAR')]
+    ]
+    return sg.Window('CRUD Atualiza Nome', layout, finalize=True)
+
+def janela_deletar():
+    layout = [
+        [sg.Text('Informe o ID do produto para deletar'), sg.Input(key='deleteProd')],
+        [sg.Text('',key='aviso')],
+        [sg.Button('DELETAR'), sg.Button('VOLTAR')]
+    ]
+    return sg.Window('CRUD Deletar', layout, finalize=True)
+
+def leitura_banco():
+    layout = [
+        [sg.Text('',key='aviso')],
+        [sg.Button('LER'), sg.Button('VOLTAR')]
+    ]
+    return sg.Window('Tela Leitura', layout, finalize=True)
+
+# criar as janelas inciais
+janela1, janela2, janela3 = janela_inicial(), None, None
 
 
-# CRUD
-# CADASTRAR NO BANCO
-def create():
-    produto = input('Qual o nome do produto a ser adicionado: ')
-    preco = int(input('Qual o valor do produto: '))
-    # ATENÇÃO AS ""
-    comando = f'INSERT INTO produtos (nome_produto, valor_produto) VALUES ("{produto}", {preco})'
-    cursor.execute(comando)
-    conexao.commit()  # editar o banco de dados
+while True:
+    window, eventos, valores = sg.read_all_windows()
 
-# LER O BANCO
-def read():
-    comando = 'SELECT * FROM produtos'
-    cursor.execute(comando)
-    resultado = cursor.fetchall()  # ler o banco de dados
-    print(resultado)
+    def create():
+        # produto = input('Qual o nome do produto a ser adicionado: ')
+        # preco = int(input('Qual o valor do produto: '))
+        produto = valores['addProduto']
+        preco = valores['addPreco']
+        comando = f'INSERT INTO produtos (nome_produto, valor_produto) VALUES ("{produto}", {preco})' # ATENÇÃO AS ""
+        cursor.execute(comando)
+        conexao.commit()  # editar o banco de dados
+
+    # LER O BANCO
+    def read():
+        comando = 'SELECT * FROM produtos'
+        cursor.execute(comando)
+        resultado = cursor.fetchall()  # ler o banco de dados
+        return resultado
 
 # ATUALIZAR VALOR DE PRODUTO CADASTRADO NO ABNCO
-def update_valor():
-    valor_atual = int(input('Informe o preço atual do produto: '))
-    novo_valor = int(input('Informe o novo preço: '))
-    comando = f'UPDATE produtos SET valor_produto = {novo_valor} WHERE valor_produto = "{valor_atual}"'
-    cursor.execute(comando)
-    conexao.commit()
+    def update_valor():
+        IdVendas = valores['idVenda']
+        novo_valor = valores['novoPrecoProd']
+        comando = f'UPDATE produtos SET valor_produto = {novo_valor} WHERE idVendas = "{IdVendas}"'
+        cursor.execute(comando)
+        conexao.commit()
 
 # ATUALIZAR NOME DE PRODUTO CADASTRADO NO BANCO
-def update_nome():
-    nome_atual = input('Informe o nome atual do produto; ')
-    novo_nome = input('Informe o novo nome do produto: ')
-    comando = f'UPDATE produtos SET nome_produto = {novo_nome} WHERE nome_produto = "{nome_atual}"'
-    cursor.execute(comando)
-    conexao.commit()
+    def update_nome():
+        IdVendas = valores['idProd']
+        novo_nome = valores['novoNomeProd']
+        comando = f'UPDATE produtos SET nome_produto = {novo_nome} WHERE idVendas = "{IdVendas}"'
+        cursor.execute(comando)
+        conexao.commit()
 
 # DELETAR UM PRODUTO CADASTRADO NO BANCO
-def delete():
-    nome_produto = input('Informe o nome do produto a ser deletado: ')
-    comando = f'DELETE FROM produtos WHERE nome_produto = "{nome_produto}"'
-    cursor.execute(comando)
-    conexao.commit()
+    def delete():
+        IdVendas = valores['deleteProd']
+        comando = f'DELETE FROM produtos WHERE idVendas = "{IdVendas}"'
+        cursor.execute(comando)
+        conexao.commit()
 
+    # quando a janela for fechada
+    if window == janela1 and eventos == sg.WIN_CLOSED:
+        break
 
-# CONDICIONAIS PARA CHAMAR AS FUNÇOES
-if criar == 's':
-     create()
+    # ADICIONAR PRODUTO
+    if window == janela1 and eventos == 'Adicionar Produto':
+        janela1.hide()
+        janela2 = janela_add_prod()
+    if window == janela2 and eventos == 'ADICIONAR':
+        create()
+        janela2['aviso'].Update('Produto Cadastrado!!')
 
-if atualizar == 's' and up_valor == 's':
-     update_valor()
-
-if atualizar == 's' and up_nome == 's':
-     update_nome()
-
-if apagar == 's':
-     delete()
-
-# LER BANCO
-read()
+    # ATUALIZAR PRODUTO
+    elif window == janela1 and eventos == 'Atualizar Produto':
+        janela1.hide()
+        janela2 = janela_define_atualizar()
+    if window == janela2 and eventos == 'VOLTAR':
+        janela2.hide()
+        janela1.un_hide()
+    if window == janela2 and eventos == 'VALOR':
+        janela2.hide()
+        janela3 = janela_atualiza_valor()
+    if window == janela3 and eventos == 'VOLTAR':
+        janela3.hide()
+        janela2.un_hide()
+    if window == janela3 and eventos == 'ATUALIZAR VALOR':
+        update_valor()
+        janela3['aviso'].Update('Valor Atualizado!!')
+    if window == janela2 and eventos == 'NOME':
+        janela1.hide()
+        janela3 = janela_atualiza_nome()
+    if window == janela3 and eventos == 'ATUALIZAR NOME':
+        update_nome()
+        janela3['aviso'].UPdate('Nome Atualizado!!')
+            
+    # DELETAR PRODUTO
+    elif window == janela1 and eventos == 'Deletar Produto':
+        janela1.hide()
+        janela2 = janela_deletar()
+    if window == janela2 and eventos == 'DELETAR':
+        delete()
+        janela2['aviso'].Update('Produto Deletado!!')
+        
+    # LEITURA DO BANCO
+    if window == janela1 and eventos == 'Ler Banco de Dados':
+        janela1.hide()
+        janela2 = leitura_banco()
+    if window == janela2 and eventos == 'VOLTAR':
+        janela2.hide()
+        janela1.un_hide()
+    if window ==  janela2 and eventos == 'LER':
+        dados = read()
+        janela2['aviso'].Update(f'Dados do banco: {dados}')
 
 # FECHAR CONEXAO COM O BANCO
 cursor.close()
