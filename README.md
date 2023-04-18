@@ -21,14 +21,16 @@ Para utilizar este script, basta ter o Python instalado em sua máquina. Também
 Clone este repositório ou baixe o arquivo crud.py.
 Instale as dependências necessárias, executando o comando pip install PySimpleGUI mysql-connector-python.
 Configure as credenciais de acesso ao banco de dados. Para isso, edite as seguintes linhas no início do arquivo crud.py:
-
+##
+```
 conexao = mysql.connector.connect(
     host='seu_host',
     user='usuario_do_seu_banco',
     password='senha_do_seu_banco',
     database='nome_do_seu_banco',
 )
-
+```
+##
 Substitua os valores entre as aspas pelos dados de acesso ao seu banco de dados.
 
 Execute o arquivo crud.py e utilize as funcionalidades disponíveis:
